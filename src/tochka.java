@@ -11,4 +11,11 @@ class Tochka {
     public String toString() {
         return "Tochka: centerX=" + centerX + ", centerY=" + centerY ;
     }
+    public double getCenterX() {
+        return centerX;
+    }
+
+    public double getCenterY() {
+        return centerY;
+    }
 }

@@ -21,11 +21,28 @@ class Polosa {
         // Проверяем, лежит ли точка на полосе
         double pointXRelative = tochka.centerX - centerX; // относительная координата X точки
         double pointYRelative = tochka.centerY - centerY; // относительная координата Y точки
-        double pointAngle = Math.atan2(pointYRelative, pointXRelative); // угол точки относительно начала полосы
-        double pointDistance = Math.hypot(pointXRelative, pointYRelative); // расстояние от точки до начала полосы
-
+        int rotatedX = (int) (pointXRelative * Math.cos(-angle) - pointYRelative * Math.sin(-angle));
+        int rotatedY = (int) (pointXRelative * Math.sin(-angle) + pointYRelative * Math.cos(-angle));
         // Проверяем условия, при которых точка будет лежать на полосе
-        return pointAngle >= angle && pointAngle <= angle + Math.PI / 2 && pointDistance <= length
-                && pointDistance * Math.tan(angle) <= width;
+        return rotatedX >= 0 && rotatedX <= width && rotatedY >= 0 && rotatedY <= length; }
+
+    public double getCenterX() {
+        return centerX;
+    }
+
+    public double getCenterY() {
+        return centerY;
+    }
+
+    public double getWidth() {
+        return width;
+    }
+
+    public double getLength() {
+        return length;
+    }
+
+    public double getAngle() {
+        return angle;
     }
 }

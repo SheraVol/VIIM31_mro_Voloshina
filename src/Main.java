@@ -1,3 +1,5 @@
+import javax.swing.*;
+import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -6,7 +8,46 @@ import java.util.Scanner;
 
 
 
-public class Main  {
+public class Main  extends JPanel {
+    private Polosa polosa;
+
+    private final List<Tochka> tochki;
+
+    public Main(Polosa polosi, List<Tochka> tochki) {
+        this.polosa = polosi;
+        this.tochki = tochki;
+        setPreferredSize(new Dimension(800,600));
+    }
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+
+        Graphics2D g2d = (Graphics2D) g;
+        int centerPoX = getWidth() / 2;
+        int centerPoY = getHeight() / 2;
+        // Отрисовка полос
+        g2d.setColor(Color.RED);
+        int translatedX = (int) (polosa.getCenterX() + centerPoX);
+        int translatedY = (int) (centerPoY - polosa.getCenterY());
+
+        // Переводим координаты точки, на которую наклонена полоса
+        int pivotedX = (int) (polosa.getWidth() / 2);
+        int pivotedY = (int) (polosa.getLength() / 2);
+
+        // Переводим угол наклона полосы
+        double angle = -polosa.getAngle();
+        g2d.rotate(angle, translatedX, translatedY);
+        g2d.drawRect(translatedX - pivotedX, translatedY - pivotedY, (int) polosa.getWidth(), (int) polosa.getLength());
+        g2d.setColor(Color.BLUE);
+        for (Tochka tochka : tochki) {
+            if (polosa.containsTochki(tochka)) {
+                int translatedTochkaX = (int) (tochka.getCenterX() + centerPoX);
+                int translatedTochkaY = (int) (centerPoY - tochka.getCenterY());
+                g2d.fillOval(translatedTochkaX - 2, translatedTochkaY - 2, 5, 5);
+            }
+        }
+    }
+
     public static void main(String[] args) {
         List<Polosa> polosi = readPolosiFromFile("polosi.txt");
         if (polosi.isEmpty()) {
@@ -22,7 +63,14 @@ public class Main  {
     }
     printTochki(tochki);
         printTochkiInsidePolosi(polosi,tochki);
+        Main mainPanel = new Main(polosi, tochki);
 
+        JFrame frame = new JFrame("Polosa");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.getContentPane().add(mainPanel);
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
 }
 
 
@@ -39,8 +87,8 @@ public class Main  {
         Random random = new Random();
 
         for (int i = 0; i < counts; i++) {
-            double centerX = random.nextDouble();
-            double centerY = random.nextDouble();
+            double centerX = random.nextDouble()*100;
+            double centerY = random.nextDouble()*100;
 
             Tochka tochka = new Tochka(centerX, centerY);
             tochki.add(tochka);
@@ -125,8 +173,8 @@ public class Main  {
         Random random = new Random();
 
         for (int k = 0; k < count; k++) {
-            double centerX = random.nextDouble();
-            double centerY = random.nextDouble();
+            double centerX = random.nextDouble()*100;
+            double centerY = random.nextDouble()*100;
             double width = widthMin + (widthMax - widthMin) * random.nextDouble();
             double length = lengthMin + (lengthMax - lengthMin) * random.nextDouble();
 
